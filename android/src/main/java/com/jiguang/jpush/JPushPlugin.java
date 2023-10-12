@@ -58,6 +58,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
          context = flutterPluginBinding.getApplicationContext();
         JPushHelper.getInstance().setMethodChannel(channel);
         JPushHelper.getInstance().setContext(context);
+        JPushHelper.getInstance().setDartIsReady(true);
     }
     @Override
     public void onAttachedToActivity(ActivityPluginBinding activityPluginBinding) {
@@ -112,7 +113,6 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
             getAlias(call, result);
         } else if (call.method.equals("deleteAlias")) {
             deleteAlias(call, result);
-            ;
         } else if (call.method.equals("stopPush")) {
             stopPush(call, result);
         } else if (call.method.equals("resumePush")) {
