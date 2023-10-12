@@ -1,21 +1,24 @@
 package com.jiguang.jpush;
+
+
+import android.Manifest;
 import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.core.app.ActivityCompat;
+
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,19 +29,20 @@ import java.util.Set;
 import cn.jiguang.api.JCoreInterface;
 import cn.jiguang.api.utils.JCollectionAuth;
 import cn.jpush.android.api.JPushInterface;
-import cn.jpush.android.api.NotificationMessage;
 import cn.jpush.android.data.JPushLocalNotification;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
+import io.flutter.embedding.engine.plugins.activity.ActivityAware;
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.embedding.engine.plugins.activity.ActivityAware;
-import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
+import io.flutter.plugin.common.PluginRegistry;
+
 /**
  * JPushPlugin
  */
-public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAware {
+public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAware, PluginRegistry.RequestPermissionsResultListener {
     private static String TAG = "| JPUSH | Flutter | Android | ";
     private Context context;
     private int sequence;
@@ -161,7 +165,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
         String channelId = (String)readableMap.get("channel_id");
         String sound = (String)readableMap.get("sound");
         try {
-            NotificationManager manager= (NotificationManager) context.getSystemService("notification");
+            NotificationManager manager= (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             if(Build.VERSION.SDK_INT<26){
                 return;
             }
@@ -229,8 +233,19 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
     }
 
 
-
+    private static final int REQUEST_POST_NOTIFICATIONS = 78456;
+    private MethodCall pendingCall;
+    private Result pendingResult;
     public void setup(MethodCall call, Result result) {
+        if((Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)){
+
+            ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                    REQUEST_POST_NOTIFICATIONS);
+            pendingCall = call;
+            pendingResult = result;
+            return;
+        }
+
         Log.d(TAG, "setup :" + call.arguments);
 
         HashMap<String, Object> map = call.arguments();
@@ -432,6 +447,24 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
 
         JPushInterface.goToAppNotificationSettings(context);
 
+    }
+
+    @Override
+    public boolean onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == REQUEST_POST_NOTIFICATIONS) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                //TODO 获取
+                setup(pendingCall,pendingResult);
+            } else {
+                //TODO
+                pendingResult.error(
+                        "no_permissions", "POST_NOTIFICATIONS", null);
+                pendingResult = null;
+                pendingCall = null;
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
