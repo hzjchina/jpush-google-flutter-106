@@ -15,7 +15,12 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONObject;
 
@@ -30,6 +35,7 @@ import cn.jiguang.api.JCoreInterface;
 import cn.jiguang.api.utils.JCollectionAuth;
 import cn.jpush.android.api.JPushInterface;
 import cn.jpush.android.data.JPushLocalNotification;
+import cn.jpush.android.local.ActionHelper;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
@@ -149,6 +155,8 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
             setChannelAndSound(call, result);
         }else if (call.method.equals("requestRequiredPermission")) {
             requestRequiredPermission(call, result);
+        }else if(call.method.equals("getFcmToken")){
+            getFcmToken(call,result);
         } else {
             result.notImplemented();
         }
@@ -329,6 +337,36 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
         sequence += 1;
         JPushHelper.getInstance().addCallback(sequence,result);
         JPushInterface.setAlias(context, sequence, alias);
+    }
+
+    public void getFcmToken(MethodCall call, Result result){
+        Log.d(TAG, "getFcmToken: ");
+
+        if (context == null) {
+            Log.d(TAG, "getFcmToken context is nil.");
+            return;
+        }
+        final Result result2=result;
+        String fcmToken = JPushHelper.getInstance().getFcmToken();
+        if (fcmToken == null || fcmToken.isEmpty()) {
+            FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+                        @Override
+                        public void onComplete(@NonNull Task<String> task) {
+                            if (!task.isSuccessful()) {
+                                //Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+                                result2.error("FCM_TOKEN_ERROR","TOKEN_NULL",null);
+                                return;
+                            }
+                            // Get new FCM registration token
+                            String token = task.getResult();
+                            JPushHelper.getInstance().setFcmToken(token);
+                           // Log.d(TAG, token);
+                            result2.success(token);
+                        }
+                    });
+        } else {
+            result2.success(fcmToken);
+        }
     }
 
     public void deleteAlias(MethodCall call, Result result) {

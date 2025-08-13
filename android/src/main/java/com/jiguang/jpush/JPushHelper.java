@@ -29,6 +29,9 @@ public class JPushHelper {
     private Context context;
     private MethodChannel channel;
     private Map<Integer, Result> callbackMap = new HashMap<>();
+
+    private String fcmToken = null;
+
     private JPushHelper() {
     }
     private static final class SingleHolder {
@@ -271,5 +274,13 @@ public class JPushHelper {
                 }
             }
         });
+    }
+
+    public String getFcmToken() {
+        return fcmToken;
+    }
+
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
     }
 }

@@ -413,6 +413,13 @@ class JPush {
     }
     _channel.invokeMethod('requestRequiredPermission');
   }
+
+  Future<String> getFcmToken() async {
+    print(flutter_log + "getFcmToken:");
+
+    final String fcmToken = await _channel.invokeMethod('getFcmToken');
+    return fcmToken;
+  }
 }
 
 class NotificationSettingsIOS {
