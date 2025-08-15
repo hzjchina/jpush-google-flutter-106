@@ -346,33 +346,26 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
 
     public void getFcmToken(MethodCall call, Result result){
         VDLog.d(TAG, "getFcmToken: ");
-
         if (context == null) {
             VDLog.d(TAG, "getFcmToken context is nil.");
             return;
         }
         final Result result2=result;
-        String fcmToken = JPushHelper.getInstance().getFcmToken();
-        if (fcmToken == null || fcmToken.isEmpty()) {
-            Tasks.withTimeout(FirebaseMessaging.getInstance().getToken(),5, TimeUnit.SECONDS)
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            VDLog.w(TAG, "Fetching FCM registration token failed withTimeout", e);
-                            result2.error("FCM_TOKEN_ERROR","TOKEN_NULL",e);
-                        }
-                    })
-                    .addOnSuccessListener(new OnSuccessListener<String>() {
-                        @Override
-                        public void onSuccess(String token) {
-                            JPushHelper.getInstance().setFcmToken(token);
-                            VDLog.d(TAG, token);
-                            result2.success(token);
-                        }
-                    });
-        } else {
-            result2.success(fcmToken);
-        }
+        Tasks.withTimeout(FirebaseMessaging.getInstance().getToken(),5, TimeUnit.SECONDS)
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        VDLog.w(TAG, "Fetching FCM registration token failed withTimeout", e);
+                        result2.error("FCM_TOKEN_ERROR","TOKEN_NULL",e);
+                    }
+                })
+                .addOnSuccessListener(new OnSuccessListener<String>() {
+                    @Override
+                    public void onSuccess(String token) {
+                        VDLog.d(TAG, token);
+                        result2.success(token);
+                    }
+                });
     }
 
     public void deleteAlias(MethodCall call, Result result) {
