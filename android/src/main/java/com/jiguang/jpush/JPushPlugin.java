@@ -19,7 +19,10 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONObject;
@@ -30,6 +33,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import cn.jiguang.api.JCoreInterface;
 import cn.jiguang.api.utils.JCollectionAuth;
@@ -50,7 +54,7 @@ import io.flutter.plugin.common.PluginRegistry;
  * JPushPlugin
  */
 public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAware, PluginRegistry.RequestPermissionsResultListener {
-    private static String TAG = "| JPUSH | Flutter | Android | ";
+    private static String TAG = "JPushPlugin";
     private Context context;
     private int sequence;
     private Activity mActivity;
@@ -350,18 +354,19 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
         final Result result2=result;
         String fcmToken = JPushHelper.getInstance().getFcmToken();
         if (fcmToken == null || fcmToken.isEmpty()) {
-            FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+            Tasks.withTimeout(FirebaseMessaging.getInstance().getToken(),5, TimeUnit.SECONDS)
+                    .addOnFailureListener(new OnFailureListener() {
                         @Override
-                        public void onComplete(@NonNull Task<String> task) {
-                            if (!task.isSuccessful()) {
-                                //VDLog.w(TAG, "Fetching FCM registration token failed", task.getException());
-                                result2.error("FCM_TOKEN_ERROR","TOKEN_NULL",null);
-                                return;
-                            }
-                            // Get new FCM registration token
-                            String token = task.getResult();
+                        public void onFailure(@NonNull Exception e) {
+                            VDLog.w(TAG, "Fetching FCM registration token failed withTimeout", e);
+                            result2.error("FCM_TOKEN_ERROR","TOKEN_NULL",e);
+                        }
+                    })
+                    .addOnSuccessListener(new OnSuccessListener<String>() {
+                        @Override
+                        public void onSuccess(String token) {
                             JPushHelper.getInstance().setFcmToken(token);
-                           // VDLog.d(TAG, token);
+                            VDLog.d(TAG, token);
                             result2.success(token);
                         }
                     });

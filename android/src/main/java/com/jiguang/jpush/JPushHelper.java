@@ -19,7 +19,7 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 public class JPushHelper {
-    private static String TAG = "| JPUSH | Flutter | Android | ";
+    private static String TAG = "JPushHelper";
     private List<Map<String, Object>> openNotificationCache = new ArrayList<>();
 
     private boolean dartIsReady = false;
