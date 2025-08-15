@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,13 +12,11 @@ import java.util.Map;
 
 import cn.jpush.android.api.JPushInterface;
 import cn.jpush.android.api.NotificationMessage;
-import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 public class JPushHelper {
-    private static String TAG = "JPushHelper";
+    private static final String TAG = "JPushHelper";
     private List<Map<String, Object>> openNotificationCache = new ArrayList<>();
 
     private boolean dartIsReady = false;
@@ -80,7 +77,7 @@ public class JPushHelper {
             VDLog.d("JPushPlugin", "the channel is null");
             return;
         }
-        List<Object> tempList = new ArrayList<Object>();
+        List<Object> tempList = new ArrayList<>();
         if (dartIsReady) {
             // try to shedule notifcation cache
             List<Map<String, Object>> openNotificationCacheList = openNotificationCache;
@@ -94,7 +91,7 @@ public class JPushHelper {
     }
 
     public void dispatchRid() {
-        List<Object> tempList = new ArrayList<Object>();
+        List<Object> tempList = new ArrayList<>();
         String rid = JPushInterface.getRegistrationID(context);
         boolean ridAvailable = rid != null && !rid.isEmpty();
         if (ridAvailable && dartIsReady) {

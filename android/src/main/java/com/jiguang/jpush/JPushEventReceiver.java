@@ -3,7 +3,6 @@ package com.jiguang.jpush;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,13 +13,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import cn.jpush.android.api.JPushInterface;
 import cn.jpush.android.api.JPushMessage;
 import cn.jpush.android.api.NotificationMessage;
 import cn.jpush.android.service.JPushMessageService;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 public class JPushEventReceiver extends JPushMessageService {
+    private  final static String TAG = "JPushEventReceiver";
 
     @Override
     public void onNotifyMessageUnShow(Context context,final NotificationMessage notificationMessage) {
@@ -45,7 +44,7 @@ public class JPushEventReceiver extends JPushMessageService {
 
     @Override
     public void onInAppMessageShow(Context context,final NotificationMessage message) {
-        VDLog.i("JPushPlugin", "[onInAppMessageShow], " + message.toString());
+        VDLog.i(TAG, "[onInAppMessageShow], " + message.toString());
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
@@ -56,7 +55,7 @@ public class JPushEventReceiver extends JPushMessageService {
 
     @Override
     public void onInAppMessageClick(Context context,final NotificationMessage message) {
-        VDLog.i("JPushPlugin", "[onInAppMessageClick], " + message.toString());
+        VDLog.i(TAG, "[onInAppMessageClick], " + message.toString());
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
@@ -74,13 +73,13 @@ public class JPushEventReceiver extends JPushMessageService {
         try {
             resultJson.put("sequence", sequence);
         } catch (JSONException e) {
-            e.printStackTrace();
+            VDLog.w(TAG,"onTagOperatorResult",e);
         }
 
         final Result callback = JPushHelper.getInstance().getCallback(sequence);//instance.eventCallbackMap.get(sequence);
 
         if (callback == null) {
-            VDLog.i("JPushPlugin", "Unexpected error, callback is null!");
+            VDLog.i(TAG, "Unexpected error, callback is null!");
             return;
         }
 
@@ -97,7 +96,7 @@ public class JPushEventReceiver extends JPushMessageService {
                     try {
                         resultJson.put("code", jPushMessage.getErrorCode());
                     } catch (JSONException e) {
-                        e.printStackTrace();
+                        VDLog.w(TAG,"onTagOperatorResult Handler",e);
                     }
                     callback.error(Integer.toString(jPushMessage.getErrorCode()), "", "");
                 }
@@ -122,7 +121,7 @@ public class JPushEventReceiver extends JPushMessageService {
         final Result callback = JPushHelper.getInstance().getCallback(sequence);;
 
         if (callback == null) {
-            VDLog.i("JPushPlugin", "Unexpected error, callback is null!");
+            VDLog.i(TAG, "Unexpected error, callback is null!");
             return;
         }
 
@@ -155,7 +154,7 @@ public class JPushEventReceiver extends JPushMessageService {
         final Result callback = JPushHelper.getInstance().getCallback(sequence);;
 
         if (callback == null) {
-            VDLog.i("JPushPlugin", "Unexpected error, callback is null!");
+            VDLog.i(TAG, "Unexpected error, callback is null!");
             return;
         }
 

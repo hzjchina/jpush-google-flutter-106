@@ -13,15 +13,12 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.messaging.FirebaseMessaging;
 
@@ -37,10 +34,8 @@ import java.util.concurrent.TimeUnit;
 
 import cn.jiguang.api.JCoreInterface;
 import cn.jiguang.api.utils.JCollectionAuth;
-import cn.jiguang.internal.JConstants;
 import cn.jpush.android.api.JPushInterface;
 import cn.jpush.android.data.JPushLocalNotification;
-import cn.jpush.android.local.ActionHelper;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
@@ -54,7 +49,7 @@ import io.flutter.plugin.common.PluginRegistry;
  * JPushPlugin
  */
 public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAware, PluginRegistry.RequestPermissionsResultListener {
-    private static String TAG = "JPushPlugin";
+    private static final String TAG = "JPushPlugin";
     private Context context;
     private int sequence;
     private Activity mActivity;
@@ -192,6 +187,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
             manager.createNotificationChannel(channel1);
             JPushInterface.setChannel(context,channel);
         }catch (Throwable throwable){
+            VDLog.e(TAG,throwable.getMessage());
         }
     }
     private void setLbsEnable(MethodCall call, Result result) {
