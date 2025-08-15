@@ -80,7 +80,7 @@ public class JPushHelper {
 
     public void dispatchNotification() {
         if (channel==null) {
-            Log.d("JPushPlugin", "the channel is null");
+            VDLog.d("JPushPlugin", "the channel is null");
             return;
         }
         List<Object> tempList = new ArrayList<Object>();
@@ -105,7 +105,7 @@ public class JPushHelper {
             tempList.clear();
             List<Result> resultList = getRidCache;
             for (Result res : resultList) {
-                Log.d(TAG, "scheduleCache rid = " + rid);
+                VDLog.d(TAG, "scheduleCache rid = " + rid);
                 res.success(rid);
                 tempList.add(res);
             }
@@ -116,10 +116,10 @@ public class JPushHelper {
 
 
     public void transmitMessageReceive(String message,String title, Map<String, Object> extras) {
-        Log.d(TAG, "transmitMessageReceive " + "message=" + message + "extras=" + extras);
+        VDLog.d(TAG, "transmitMessageReceive " + "message=" + message + "extras=" + extras);
 
         if (channel==null) {
-            Log.d("JPushPlugin", "the instance is null");
+            VDLog.d("JPushPlugin", "the instance is null");
             return;
         }
         Map<String, Object> msg = new HashMap<>();
@@ -131,7 +131,7 @@ public class JPushHelper {
     }
 
     public void transmitNotificationOpen(String title, String alert, Map<String, Object> extras) {
-        Log.d(TAG, "transmitNotificationOpen " + "title=" + title + "alert=" + alert + "extras=" + extras);
+        VDLog.d(TAG, "transmitNotificationOpen " + "title=" + title + "alert=" + alert + "extras=" + extras);
 
         Map<String, Object> notification = new HashMap<>();
         notification.put("title", title);
@@ -140,10 +140,10 @@ public class JPushHelper {
         openNotificationCache.add(notification);
 
         if (channel==null) {
-            Log.d("JPushPlugin", "the channel is null");
+            VDLog.d("JPushPlugin", "the channel is null");
             return;
         }
-        Log.d("JPushPlugin", "instance.dartIsReady ="+dartIsReady);
+        VDLog.d("JPushPlugin", "instance.dartIsReady ="+dartIsReady);
         if (dartIsReady) {
             channel.invokeMethod("onOpenNotification", notification);
             openNotificationCache.remove(notification);
@@ -151,9 +151,9 @@ public class JPushHelper {
     }
 
     public  void onNotifyMessageUnShow( NotificationMessage notificationMessage) {
-        Log.e(TAG,"[onNotifyMessageUnShow] message:"+notificationMessage);
+        VDLog.e(TAG,"[onNotifyMessageUnShow] message:"+notificationMessage);
         if (channel==null) {
-            Log.d("JPushPlugin", "the channel is null");
+            VDLog.d("JPushPlugin", "the channel is null");
             return;
         }
         Map<String, Object> notification= new HashMap<>();
@@ -163,9 +163,9 @@ public class JPushHelper {
         channel.invokeMethod("onNotifyMessageUnShow", notification);
     }
     public  void onConnected( boolean isConnected) {
-        Log.e(TAG,"[onConnected] :"+isConnected);
+        VDLog.e(TAG,"[onConnected] :"+isConnected);
         if (channel==null) {
-            Log.d("JPushPlugin", "the channel is null");
+            VDLog.d("JPushPlugin", "the channel is null");
             return;
         }
         Map<String, Object> results= new HashMap<>();
@@ -173,9 +173,9 @@ public class JPushHelper {
        channel.invokeMethod("onConnected", results);
     }
     public  void onInAppMessageShow( NotificationMessage notificationMessage) {
-        Log.e(TAG,"[onInAppMessageShow] :"+notificationMessage);
+        VDLog.e(TAG,"[onInAppMessageShow] :"+notificationMessage);
         if (channel==null) {
-            Log.d("JPushPlugin", "the channel is null");
+            VDLog.d("JPushPlugin", "the channel is null");
             return;
         }
         Map<String, Object> notification= new HashMap<>();
@@ -188,9 +188,9 @@ public class JPushHelper {
         channel.invokeMethod("onInAppMessageShow", notification);
     }
     public  void onInAppMessageClick( NotificationMessage notificationMessage) {
-        Log.e(TAG,"[onInAppMessageClick] :"+notificationMessage);
+        VDLog.e(TAG,"[onInAppMessageClick] :"+notificationMessage);
         if (channel==null) {
-            Log.d("JPushPlugin", "the channel is null");
+            VDLog.d("JPushPlugin", "the channel is null");
             return;
         }
         Map<String, Object> notification= new HashMap<>();
@@ -233,14 +233,14 @@ public class JPushHelper {
                 extras.put(JPushInterface.EXTRA_NOTIFICATION_LARGET_ICON, notificationMessage.notificationLargeIcon);
             }
         }catch (Throwable e){
-            Log.e(TAG,"[onNotifyMessageUnShow] e:"+e.getMessage());
+            VDLog.e(TAG,"[onNotifyMessageUnShow] e:"+e.getMessage());
         }
         return extras;
     }
     public void transmitNotificationReceive(String title, String alert, Map<String, Object> extras) {
-        Log.d(TAG, "transmitNotificationReceive " + "title=" + title + "alert=" + alert + "extras=" + extras);
+        VDLog.d(TAG, "transmitNotificationReceive " + "title=" + title + "alert=" + alert + "extras=" + extras);
         if (channel==null) {
-            Log.d("JPushPlugin", "the channel is null");
+            VDLog.d("JPushPlugin", "the channel is null");
             return;
         }
         Map<String, Object> notification = new HashMap<>();
@@ -251,14 +251,14 @@ public class JPushHelper {
     }
 
     public void transmitReceiveRegistrationId(String rId) {
-        Log.d(TAG, "transmitReceiveRegistrationId： " + rId);
+        VDLog.d(TAG, "transmitReceiveRegistrationId： " + rId);
         jpushDidinit = true;
         dispatchNotification();
         dispatchRid();
     }
     // 主线程再返回数据
     public void runMainThread(final Map<String, Object> map, final Result result, final String method) {
-        Log.d(TAG, "runMainThread:" + "map = " + map + ",method =" + method);
+        VDLog.d(TAG, "runMainThread:" + "map = " + map + ",method =" + method);
         android.os.Handler handler = new Handler(Looper.getMainLooper());
         handler.post(new Runnable() {
             @Override
@@ -267,7 +267,7 @@ public class JPushHelper {
                     if( null != channel){
                         channel.invokeMethod(method,map);
                     }else {
-                        Log.d(TAG,"channel is null do nothing");
+                        VDLog.d(TAG,"channel is null do nothing");
                     }
                 } else {
                     result.success(map);

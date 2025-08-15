@@ -45,7 +45,7 @@ public class JPushEventReceiver extends JPushMessageService {
 
     @Override
     public void onInAppMessageShow(Context context,final NotificationMessage message) {
-        Log.i("JPushPlugin", "[onInAppMessageShow], " + message.toString());
+        VDLog.i("JPushPlugin", "[onInAppMessageShow], " + message.toString());
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
@@ -56,7 +56,7 @@ public class JPushEventReceiver extends JPushMessageService {
 
     @Override
     public void onInAppMessageClick(Context context,final NotificationMessage message) {
-        Log.i("JPushPlugin", "[onInAppMessageClick], " + message.toString());
+        VDLog.i("JPushPlugin", "[onInAppMessageClick], " + message.toString());
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
@@ -80,7 +80,7 @@ public class JPushEventReceiver extends JPushMessageService {
         final Result callback = JPushHelper.getInstance().getCallback(sequence);//instance.eventCallbackMap.get(sequence);
 
         if (callback == null) {
-            Log.i("JPushPlugin", "Unexpected error, callback is null!");
+            VDLog.i("JPushPlugin", "Unexpected error, callback is null!");
             return;
         }
 
@@ -122,7 +122,7 @@ public class JPushEventReceiver extends JPushMessageService {
         final Result callback = JPushHelper.getInstance().getCallback(sequence);;
 
         if (callback == null) {
-            Log.i("JPushPlugin", "Unexpected error, callback is null!");
+            VDLog.i("JPushPlugin", "Unexpected error, callback is null!");
             return;
         }
 
@@ -155,7 +155,7 @@ public class JPushEventReceiver extends JPushMessageService {
         final Result callback = JPushHelper.getInstance().getCallback(sequence);;
 
         if (callback == null) {
-            Log.i("JPushPlugin", "Unexpected error, callback is null!");
+            VDLog.i("JPushPlugin", "Unexpected error, callback is null!");
             return;
         }
 

@@ -33,6 +33,7 @@ import java.util.Set;
 
 import cn.jiguang.api.JCoreInterface;
 import cn.jiguang.api.utils.JCollectionAuth;
+import cn.jiguang.internal.JConstants;
 import cn.jpush.android.api.JPushInterface;
 import cn.jpush.android.data.JPushLocalNotification;
 import cn.jpush.android.local.ActionHelper;
@@ -98,7 +99,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
 
     @Override
     public void onMethodCall(MethodCall call, Result result) {
-        Log.i(TAG, call.method);
+        VDLog.i(TAG, call.method);
         if (call.method.equals("getPlatformVersion")) {
             result.success("Android " + android.os.Build.VERSION.RELEASE);
         } else if (call.method.equals("setup")) {
@@ -214,7 +215,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
     }
     private void testCountryCode(MethodCall call, Result result){
         String code = call.arguments();
-        Log.d(TAG,"testCountryCode code="+code);
+        VDLog.d(TAG,"testCountryCode code="+code);
         JCoreInterface.testCountryCode(context,code);
     }
     private void setWakeEnable(MethodCall call, Result result) {
@@ -254,7 +255,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
             return;
         }
 
-        Log.d(TAG, "setup :" + call.arguments);
+        VDLog.d(TAG, "setup :" + call.arguments);
 
         HashMap<String, Object> map = call.arguments();
         boolean debug = (boolean) map.get("debug");
@@ -272,13 +273,13 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
     }
 
     public void scheduleCache() {
-        Log.d(TAG, "scheduleCache:");
+        VDLog.d(TAG, "scheduleCache:");
       JPushHelper.getInstance().dispatchNotification();
       JPushHelper.getInstance().dispatchRid();
     }
 
     public void setTags(MethodCall call, Result result) {
-        Log.d(TAG, "setTags：");
+        VDLog.d(TAG, "setTags：");
 
         List<String> tagList = call.arguments();
         Set<String> tags = new HashSet<>(tagList);
@@ -288,7 +289,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
     }
 
     public void cleanTags(MethodCall call, Result result) {
-        Log.d(TAG, "cleanTags:");
+        VDLog.d(TAG, "cleanTags:");
 
         sequence += 1;
         JPushHelper.getInstance().addCallback(sequence,result);
@@ -296,7 +297,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
     }
 
     public void addTags(MethodCall call, Result result) {
-        Log.d(TAG, "addTags: " + call.arguments);
+        VDLog.d(TAG, "addTags: " + call.arguments);
 
         List<String> tagList = call.arguments();
         Set<String> tags = new HashSet<>(tagList);
@@ -306,7 +307,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
     }
 
     public void deleteTags(MethodCall call, Result result) {
-        Log.d(TAG, "deleteTags： " + call.arguments);
+        VDLog.d(TAG, "deleteTags： " + call.arguments);
 
         List<String> tagList = call.arguments();
         Set<String> tags = new HashSet<>(tagList);
@@ -316,14 +317,14 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
     }
 
     public void getAllTags(MethodCall call, Result result) {
-        Log.d(TAG, "getAllTags： ");
+        VDLog.d(TAG, "getAllTags： ");
 
         sequence += 1;
         JPushHelper.getInstance().addCallback(sequence,result);
         JPushInterface.getAllTags(context, sequence);
     }
     public void getAlias(MethodCall call, Result result) {
-        Log.d(TAG, "getAlias： ");
+        VDLog.d(TAG, "getAlias： ");
 
         sequence += 1;
         JPushHelper.getInstance().addCallback(sequence,result);
@@ -331,7 +332,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
     }
 
     public void setAlias(MethodCall call, Result result) {
-        Log.d(TAG, "setAlias: " + call.arguments);
+        VDLog.d(TAG, "setAlias: " + call.arguments);
 
         String alias = call.arguments();
         sequence += 1;
@@ -340,10 +341,10 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
     }
 
     public void getFcmToken(MethodCall call, Result result){
-        Log.d(TAG, "getFcmToken: ");
+        VDLog.d(TAG, "getFcmToken: ");
 
         if (context == null) {
-            Log.d(TAG, "getFcmToken context is nil.");
+            VDLog.d(TAG, "getFcmToken context is nil.");
             return;
         }
         final Result result2=result;
@@ -353,14 +354,14 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
                         @Override
                         public void onComplete(@NonNull Task<String> task) {
                             if (!task.isSuccessful()) {
-                                //Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+                                //VDLog.w(TAG, "Fetching FCM registration token failed", task.getException());
                                 result2.error("FCM_TOKEN_ERROR","TOKEN_NULL",null);
                                 return;
                             }
                             // Get new FCM registration token
                             String token = task.getResult();
                             JPushHelper.getInstance().setFcmToken(token);
-                           // Log.d(TAG, token);
+                           // VDLog.d(TAG, token);
                             result2.success(token);
                         }
                     });
@@ -370,7 +371,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
     }
 
     public void deleteAlias(MethodCall call, Result result) {
-        Log.d(TAG, "deleteAlias:");
+        VDLog.d(TAG, "deleteAlias:");
 
         String alias = call.arguments();
         sequence += 1;
@@ -379,28 +380,28 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
     }
 
     public void stopPush(MethodCall call, Result result) {
-        Log.d(TAG, "stopPush:");
+        VDLog.d(TAG, "stopPush:");
 
         JPushInterface.stopPush(context);
     }
 
     public void resumePush(MethodCall call, Result result) {
-        Log.d(TAG, "resumePush:");
+        VDLog.d(TAG, "resumePush:");
 
         JPushInterface.resumePush(context);
     }
 
     public void clearAllNotifications(MethodCall call, Result result) {
-        Log.d(TAG, "clearAllNotifications: ");
+        VDLog.d(TAG, "clearAllNotifications: ");
 
         JPushInterface.clearAllNotifications(context);
     }
     public void clearLocalNotifications(MethodCall call, Result result) {
-        Log.d(TAG, "clearLocalNotifications: ");
+        VDLog.d(TAG, "clearLocalNotifications: ");
         JPushInterface.clearLocalNotifications(context);
     }
     public void clearNotification(MethodCall call, Result result) {
-        Log.d(TAG, "clearNotification: ");
+        VDLog.d(TAG, "clearNotification: ");
         Object id = call.arguments;
         if (id != null) {
             JPushInterface.clearNotificationById(context, (int) id);
@@ -408,16 +409,16 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
     }
 
     public void getLaunchAppNotification(MethodCall call, Result result) {
-        Log.d(TAG, "");
+        VDLog.d(TAG, "");
 
 
     }
 
     public void getRegistrationID(MethodCall call, Result result) {
-        Log.d(TAG, "getRegistrationID: ");
+        VDLog.d(TAG, "getRegistrationID: ");
 
         if (context == null) {
-            Log.d(TAG, "register context is nil.");
+            VDLog.d(TAG, "register context is nil.");
             return;
         }
 
@@ -431,7 +432,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
 
 
     public void sendLocalNotification(MethodCall call, Result result) {
-        Log.d(TAG, "sendLocalNotification: " + call.arguments);
+        VDLog.d(TAG, "sendLocalNotification: " + call.arguments);
 
         try {
             HashMap<String, Object> map = call.arguments();
@@ -458,7 +459,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
     }
 
     public void setBadge(MethodCall call, Result result) {
-        Log.d(TAG, "setBadge: " + call.arguments);
+        VDLog.d(TAG, "setBadge: " + call.arguments);
 
         HashMap<String, Object> map = call.arguments();
         Object numObject = map.get("badge");
@@ -471,7 +472,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
 
     /// 检查当前应用的通知开关是否开启
     private void isNotificationEnabled(MethodCall call, Result result) {
-        Log.d(TAG, "isNotificationEnabled: ");
+        VDLog.d(TAG, "isNotificationEnabled: ");
         int isEnabled = JPushInterface.isNotificationEnabled(context);
         //1表示开启，0表示关闭，-1表示检测失败
         HashMap<String, Object> map = new HashMap();
@@ -481,7 +482,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
     }
 
     private void openSettingsForNotification(MethodCall call, Result result) {
-        Log.d(TAG, "openSettingsForNotification: ");
+        VDLog.d(TAG, "openSettingsForNotification: ");
 
         JPushInterface.goToAppNotificationSettings(context);
 
@@ -524,7 +525,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
 
             if (action.equals(JPushInterface.ACTION_REGISTRATION_ID)) {
                 String rId = intent.getStringExtra(JPushInterface.EXTRA_REGISTRATION_ID);
-                Log.d("JPushPlugin", "on get registration");
+                VDLog.d("JPushPlugin", "on get registration");
                 JPushHelper.getInstance().transmitReceiveRegistrationId(rId);
 
             } else if (action.equals(JPushInterface.ACTION_MESSAGE_RECEIVED)) {
@@ -537,7 +538,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
         }
 
         private void handlingMessageReceive(Intent intent) {
-            Log.d(TAG, "handlingMessageReceive " + intent.getAction());
+            VDLog.d(TAG, "handlingMessageReceive " + intent.getAction());
 
             String msg = intent.getStringExtra(JPushInterface.EXTRA_MESSAGE);
             String title = intent.getStringExtra(JPushInterface.EXTRA_TITLE);
@@ -546,7 +547,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
         }
 
         private void handlingNotificationOpen(Context context, Intent intent) {
-            Log.d(TAG, "handlingNotificationOpen " + intent.getAction());
+            VDLog.d(TAG, "handlingNotificationOpen " + intent.getAction());
 
             String title = intent.getStringExtra(JPushInterface.EXTRA_NOTIFICATION_TITLE);
             String alert = intent.getStringExtra(JPushInterface.EXTRA_ALERT);
@@ -555,7 +556,7 @@ public class JPushPlugin implements FlutterPlugin, MethodCallHandler, ActivityAw
         }
 
         private void handlingNotificationReceive(Context context, Intent intent) {
-            Log.d(TAG, "handlingNotificationReceive " + intent.getAction());
+            VDLog.d(TAG, "handlingNotificationReceive " + intent.getAction());
 
             String title = intent.getStringExtra(JPushInterface.EXTRA_NOTIFICATION_TITLE);
             String alert = intent.getStringExtra(JPushInterface.EXTRA_ALERT);
